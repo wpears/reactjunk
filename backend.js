@@ -16,7 +16,7 @@ var server = http.createServer(function(request, response) {
       function cb(formData){
         var json = JSON.parse(file); 
 
-        formData = formData.replace('+', ' ');
+        formData = formData.replace(/\+/g, ' ');
         var pairs = formData.split('&')
         var data = {};
         
@@ -28,7 +28,7 @@ var server = http.createServer(function(request, response) {
 
         json.push(data);
 
-        fs.writeFile('comments.json', json, function(err){
+        fs.writeFile('comments.json', JSON.stringify(json), function(err){
           console.log("Updated comments to ",json);
           response.writeHead(201);
           response.end('Got it');
