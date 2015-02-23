@@ -13,6 +13,10 @@ var CommentBox = React.createClass({
     });
   },
   handleCommentSubmit: function(comment) {
+    var comments = this.state.data;
+    var newComments = comments.concat([comment]);
+    this.setState({data: newComments});
+
     $.ajax({
       url: this.props.url,
       dataType: 'json',
@@ -84,7 +88,6 @@ var CommentForm = React.createClass({
     if (!text || !author) {
       return;
     }
-    // TODO: send request to the server
     this.props.onCommentSubmit({author: author, text: text});
     this.refs.author.getDOMNode().value = '';
     this.refs.text.getDOMNode().value = '';
