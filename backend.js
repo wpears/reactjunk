@@ -7,12 +7,28 @@ var server = http.createServer(function(request, response) {
   if(url =='/comments.json'){
     fs.readFile('comments.json',function(err,file){
       if(request.method == 'GET'){
+        console.log("Getting json");
         return response.end(file);
       }
-      function cb(data){
+
+      parsePost(request,cb);
+
+      function cb(formData){
         var json = JSON.parse(file); 
+
+        formData = formData.replace('+', ' ');
+        var pairs = formData.split('&')
+        var data = {};
+        
+        pairs.forEach(function(v){
+          var arr = v.split('=');
+          console.log(arr);
+          data[arr[0]] = arr[1];
+        });
+
         json.push(data);
-        fs.writeFile('comments.json',function(err){
+
+        fs.writeFile('comments.json', json, function(err){
           console.log("Updated comments to ",json);
           response.writeHead(201);
           response.end('Got it');
@@ -22,6 +38,7 @@ var server = http.createServer(function(request, response) {
   }else{
     if(url == '/') url = '/index.html';
     url = path.join(__dirname, url); 
+    console.log('returning %s', url);
     fs.createReadStream(url).pipe(response);  
   }
 });
